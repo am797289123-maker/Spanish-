@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>تعلّم الإسبانية بدون معلم</title>
+<style>
+:root{--bg:#faf6ef;--card:#fff;--tx:#2a2118;--mu:#7a6a58;--ac:#c2410c;--ac2:#fde6d6;--bd:#eadfcf;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1a1613;--card:#262019;--tx:#f3ebe0;--mu:#b3a493;--ac:#fb923c;--ac2:#3a2a1e;--bd:#3a3128;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#1a1613;--card:#262019;--tx:#f3ebe0;--mu:#b3a493;--ac:#fb923c;--ac2:#3a2a1e;--bd:#3a3128;color-scheme:dark}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.6 system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif;max-width:720px;margin-inline:auto}
+header{padding:18px 16px 6px;text-align:center}
+h1{margin:0;font-size:22px}
+header p{margin:2px 0 0;color:var(--mu);font-size:13px}
+nav{position:sticky;top:env(safe-area-inset-top,0px);background:var(--bg);display:flex;gap:8px;overflow-x:auto;padding:10px 12px;z-index:5}
+nav button{flex:none;border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:20px;padding:6px 14px;font:inherit;font-size:14px;cursor:pointer}
+nav button.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+.bar{display:flex;justify-content:space-between;align-items:center;padding:4px 16px;font-size:13px;color:var(--mu)}
+.bar button{border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:14px;padding:3px 12px;font:inherit;cursor:pointer}
+.bar button.on{background:var(--ac2);border-color:var(--ac)}
+main{padding:6px 12px 40px}
+.row{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:10px 14px;margin:8px 0;cursor:pointer;width:100%;text-align:start;color:var(--tx);font:inherit}
+.row:active,.row.pl{background:var(--ac2);border-color:var(--ac)}
+.sp{flex:none;width:34px;height:34px;border-radius:50%;background:var(--ac);color:#fff;display:grid;place-items:center;font-size:15px}
+.es{direction:ltr;text-align:left;font-size:19px;font-weight:600;unicode-bidi:isolate}
+.ar{color:var(--mu);font-size:15px}
+.t{display:block}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:12px 14px;margin:10px 0}
+.card h3{margin:0 0 4px;font-size:17px;color:var(--ac)}
+.card p{margin:0 0 8px;font-size:15px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--ac);background:var(--ac2);color:var(--tx);border-radius:12px;padding:3px 10px;font:inherit;font-size:14px;cursor:pointer;text-align:center}
+.chip b{direction:ltr;unicode-bidi:isolate;display:inline-block}
+.chip small{color:var(--mu);margin-inline-start:6px}
+.warn{background:var(--ac2);border-radius:10px;padding:8px 12px;font-size:13px;margin:6px 0;display:none}
+</style>
+</head>
+<body>
+<header><h1>🇪🇸 تعلّم الإسبانية بدون معلم</h1><p>اضغط على أي كلمة أو جملة لتسمع نطقها</p></header>
+<nav id="nav"></nav>
+<div class="bar"><span id="cnt"></span><button id="slow">🐢 نطق بطيء</button></div>
+<main><div class="warn" id="warn">⚠️ متصفحك لا يدعم النطق الصوتي أو لا توجد لغة إسبانية مثبتة في جهازك. جرّب متصفحاً آخر أو ثبّت صوتاً إسبانياً من إعدادات الجهاز.</div><div id="box"></div></main>
+<script>
+var D=[
+["👋","التحيات",`Hola|مرحباً
+Buenos días|صباح الخير
+Buenas tardes|مساء الخير (بعد الظهر)
+Buenas noches|مساء الخير (ليلاً) / تصبح على خير
+Adiós|وداعاً
+Hasta luego|إلى اللقاء
+Hasta mañana|إلى الغد
+¿Cómo estás?|كيف حالك؟
+Estoy bien, gracias|أنا بخير، شكراً
+¿Y tú?|وأنت؟
+Mucho gusto|تشرفت بمعرفتك
+Bienvenido|أهلاً بك
+Por favor|من فضلك
+Gracias|شكراً
+De nada|عفواً
+Perdón|المعذرة
+Lo siento|أنا آسف`],
+["🔢","الأرقام",`cero|٠ - صفر
+uno|١ - واحد
+dos|٢ - اثنان
+tres|٣ - ثلاثة
+cuatro|٤ - أربعة
+cinco|٥ - خمسة
+seis|٦ - ستة
+siete|٧ - سبعة
+ocho|٨ - ثمانية
+nueve|٩ - تسعة
+diez|١٠ - عشرة
+once|١١
+doce|١٢
+trece|١٣
+catorce|١٤
+quince|١٥
+dieciséis|١٦
+diecisiete|١٧
+dieciocho|١٨
+diecinueve|١٩
+veinte|٢٠ - عشرون
+veintiuno|٢١
+treinta|٣٠ - ثلاثون
+cuarenta|٤٠ - أربعون
+cincuenta|٥٠ - خمسون
+sesenta|٦٠ - ستون
+setenta|٧٠ - سبعون
+ochenta|٨٠ - ثمانون
+noventa|٩٠ - تسعون
+cien|١٠٠ - مئة
+mil|١٠٠٠ - ألف`],
+["💬","عبارات يومية",`Sí|نعم
+No|لا
+Quizás|ربما
+No entiendo|لا أفهم
+¿Puede repetir, por favor?|هل يمكنك أن تعيد من فضلك؟
+Hable más despacio, por favor|تحدث ببطء أكثر من فضلك
+¿Cómo se dice en español?|كيف يُقال هذا بالإسبانية؟
+¿Dónde está el baño?|أين الحمام؟
+¿Cuánto cuesta?|كم السعر؟
+Necesito ayuda|أحتاج إلى مساعدة
+Tengo hambre|أنا جائع
+Tengo sed|أنا عطشان
+Quiero agua|أريد ماءً
+La cuenta, por favor|الحساب من فضلك
+No hablo mucho español|لا أتحدث الإسبانية كثيراً`],
+["🗓️","جمل تُستخدم يومياً",`Me levanto a las siete|أستيقظ في الساعة السابعة
+Desayuno en casa|أتناول الفطور في البيت
+Voy al trabajo|أذهب إلى العمل
+Estoy aprendiendo español|أنا أتعلم الإسبانية
+Hablo un poco de español|أتحدث القليل من الإسبانية
+Me gusta el café|أحب القهوة
+¿Qué haces?|ماذا تفعل؟
+¿Dónde está la estación?|أين المحطة؟
+Vamos a comer|هيا نأكل
+Hace calor|الجو حار
+Hace frío|الجو بارد
+Nos vemos mañana|نلتقي غداً
+Buen provecho|بالهناء والعافية
+Feliz cumpleaños|عيد ميلاد سعيد`],
+["🍂","فصول السنة",`la primavera|الربيع
+el verano|الصيف
+el otoño|الخريف
+el invierno|الشتاء
+Me gusta el verano|أحب الصيف
+En invierno hace frío|في الشتاء يكون الجو بارداً
+En primavera hay flores|في الربيع توجد أزهار
+las estaciones del año|فصول السنة`],
+["⏰","الوقت والأيام",`¿Qué hora es?|كم الساعة؟
+Es la una|الساعة الواحدة
+Son las dos|الساعة الثانية
+Son las tres y media|الثالثة والنصف
+Son las cuatro y cuarto|الرابعة والربع
+Son las cinco menos cuarto|الخامسة إلا ربعاً
+hoy|اليوم
+mañana|غداً
+ayer|أمس
+ahora|الآن
+la mañana|الصباح
+la tarde|بعد الظهر
+la noche|الليل
+la semana|الأسبوع
+el mes|الشهر
+el año|السنة
+lunes|الإثنين
+martes|الثلاثاء
+miércoles|الأربعاء
+jueves|الخميس
+viernes|الجمعة
+sábado|السبت
+domingo|الأحد`],
+["🎨","الألوان",`rojo|أحمر
+azul|أزرق
+verde|أخضر
+amarillo|أصفر
+negro|أسود
+blanco|أبيض
+naranja|برتقالي
+morado|بنفسجي
+rosa|وردي
+gris|رمادي
+marrón|بني
+¿De qué color es?|ما لونه؟`],
+["👨‍👩‍👧","العائلة والأقارب",`la familia|العائلة
+el padre|الأب
+la madre|الأم
+el hermano|الأخ
+la hermana|الأخت
+el hijo|الابن
+la hija|الابنة
+el abuelo|الجد
+la abuela|الجدة
+el tío|العم / الخال
+la tía|العمة / الخالة
+el primo|ابن العم / ابن الخال
+la prima|بنت العم / بنت الخال
+el sobrino|ابن الأخ / ابن الأخت
+el nieto|الحفيد
+el esposo|الزوج
+la esposa|الزوجة
+Tengo dos hermanos|لدي أخوان
+Mi familia es grande|عائلتي كبيرة`],
+["🌍","أسماء الدول",`España|إسبانيا
+México|المكسيك
+Argentina|الأرجنتين
+Colombia|كولومبيا
+Brasil|البرازيل
+Egipto|مصر
+Arabia Saudita|السعودية
+Marruecos|المغرب
+Argelia|الجزائر
+Túnez|تونس
+Irak|العراق
+Siria|سوريا
+Jordania|الأردن
+Palestina|فلسطين
+Líbano|لبنان
+Emiratos Árabes Unidos|الإمارات
+Estados Unidos|أمريكا
+Francia|فرنسا
+Alemania|ألمانيا
+Turquía|تركيا`],
+["🪪","الجنسيات",`egipcio / egipcia|مصري / مصرية
+saudí|سعودي / سعودية
+marroquí|مغربي / مغربية
+sirio / siria|سوري / سورية
+iraquí|عراقي / عراقية
+jordano / jordana|أردني / أردنية
+palestino / palestina|فلسطيني / فلسطينية
+libanés / libanesa|لبناني / لبنانية
+español / española|إسباني / إسبانية
+mexicano / mexicana|مكسيكي / مكسيكية
+argentino / argentina|أرجنتيني / أرجنتينية
+estadounidense|أمريكي / أمريكية
+francés / francesa|فرنسي / فرنسية
+alemán / alemana|ألماني / ألمانية
+Soy egipcio|أنا مصري (مذكر)
+Soy egipcia|أنا مصرية (مؤنث)`],
+["🤝","جمل التعارف",`Me llamo Ahmed|اسمي أحمد
+¿Cómo te llamas?|ما اسمك؟
+Mucho gusto|تشرفت بمعرفتك
+Encantado / Encantada|تشرفت (الرجل / المرأة)
+Soy de Egipto|أنا من مصر
+¿De dónde eres?|من أين أنت؟
+Tengo veinte años|عمري عشرون سنة
+¿Cuántos años tienes?|كم عمرك؟
+Vivo en El Cairo|أسكن في القاهرة
+Soy estudiante|أنا طالب
+Trabajo como ingeniero|أعمل مهندساً
+¿A qué te dedicas?|ماذا تعمل؟
+Hablo árabe e inglés|أتحدث العربية والإنجليزية
+¿Hablas inglés?|هل تتحدث الإنجليزية؟
+Estoy casado|أنا متزوج
+Soy soltero|أنا أعزب`],
+["😊","المشاعر",`Estoy feliz|أنا سعيد
+Estoy triste|أنا حزين
+Estoy cansado|أنا متعب
+Estoy enojado|أنا غاضب
+Estoy nervioso|أنا متوتر
+Estoy aburrido|أنا ملول
+Estoy sorprendido|أنا متفاجئ
+Tengo miedo|أنا خائف
+Estoy enfermo|أنا مريض
+Estoy emocionado|أنا متحمس
+Estoy tranquilo|أنا هادئ
+Estoy preocupado|أنا قلق
+Te quiero|أحبك
+Te extraño|أشتاق إليك`],
+["📏","الصفات",`grande|كبير
+pequeño|صغير
+bonito|جميل
+feo|قبيح
+nuevo|جديد
+viejo|قديم
+bueno|جيد
+malo|سيئ
+caro|غالٍ
+barato|رخيص
+rápido|سريع
+lento|بطيء
+alto|طويل
+bajo|قصير
+fácil|سهل
+difícil|صعب
+caliente|ساخن
+frío|بارد
+La casa es grande|البيت كبير
+La comida es buena|الطعام جيد`],
+["🙋","الضمائر",`yo|أنا
+tú|أنتَ / أنتِ (للمخاطب المقرّب)
+usted|حضرتك (للاحترام)
+él|هو
+ella|هي
+nosotros|نحن (مذكر أو مختلط)
+nosotras|نحن (مؤنث)
+vosotros|أنتم (إسبانيا)
+ustedes|أنتم (أمريكا اللاتينية، وللاحترام)
+ellos|هم
+ellas|هن
+Yo soy|أنا أكون
+Tú eres|أنت تكون
+Él es|هو يكون
+Nosotros somos|نحن نكون
+Ellos son|هم يكونون`]
+];
+var P=[
+["أحرف العلة الخمسة","تُنطق دائماً بصوت ثابت وواضح ولا تتغير: a = آ قصيرة، e = إي قصيرة (مثل الفتحة والكسرة)، i = إي طويلة، o = أو قصيرة، u = أو.",["casa|كاسا","mesa|ميسا","vino|بينو","todo|تودو","uno|أونو"]],
+["H — حرف صامت دائماً","لا يُنطق أبداً في أي موقع من الكلمة، فـ hola تُقرأ «أولا».",["hola|أولا","hotel|أوتيل","hombre|أومبري","hermano|إيرمانو","ahora|آأورا"]],
+["J — تُنطق خاء أو هاء قوية","دائماً صوت خشن قريب من «خ» مع احتكاك في الحلق.",["jamón|خامون","trabajo|ترابخو","ojo|أوخو","jueves|خويبس"]],
+["G — لها نطقان","قبل a, o, u تُنطق «غ» (gato). وقبل e, i تُنطق «خ» (gente).",["gato|غاتو","gusto|غوستو","gente|خينتي","gigante|خيغانتي"]],
+["gu / gü — الـ u الصامتة","في gue و gui تكون u صامتة وG تبقى «غ»: guerra = غيرّا. أما إذا وُضعت نقطتان (ü) فتُنطق u: pingüino = بينغوينو.",["guerra|غيرّا","guitarra|غيتارّا","pingüino|بينغوينو","vergüenza|بيرغوينثا"]],
+["C — حسب الحرف الذي بعدها","قبل a, o, u تُنطق «ك». وقبل e, i تُنطق «ث» في إسبانيا و«س» في أمريكا اللاتينية.",["casa|كاسا","color|كولور","cena|ثينا / سينا","gracias|غراثياس / غراسياس"]],
+["qu — الـ u صامتة","تُنطق «ك» ولا تُنطق u أبداً، وتأتي دائماً قبل e أو i.",["queso|كيسو","quince|كينثي","quién|كيين","parque|باركي"]],
+["Z — ث أو س","تُنطق «ث» في إسبانيا، و«س» في أمريكا اللاتينية. ولا تُنطق «ز» أبداً.",["zapato|ثاباتو / ساباتو","azul|آثول / آسول","pizza|بيثا"]],
+["S — سين دائماً","لا تُنطق «ز» في الإسبانية حتى بين حرفي علة.",["casa|كاسا","rosa|روسا","mesa|ميسا"]],
+["LL و Y","LL تُنطق «ي» في معظم البلدان (وفي الأرجنتين تقترب من «ج/ش»). وY بين الحروف تُنطق «ي»، وكلمة y وحدها (بمعنى و) تُنطق «إي».",["llamar|يامار","calle|كاييي","yo|يو","ayer|آيير","pan y vino|بان إي بينو"]],
+["Ñ — نون مفخّمة","تُنطق «ني» كما في «مانيا».",["España|إسبانيا","mañana|مانيانا","niño|نينيو","año|آنيو"]],
+["CH — تش","صوت «تش» مثل chair بالإنجليزية.",["chocolate|تشوكولاتي","mucho|موتشو","noche|نوتشي"]],
+["R و RR — الراء المكرّرة","R في أول الكلمة أو RR تُنطق راء مكررة بقوة. أما R في وسط الكلمة فراء خفيفة واحدة. لاحظ الفرق: pero (لكن) و perro (كلب).",["perro|بيرّو","pero|بيرو","rojo|روخو","carro|كارّو","caro|كارو"]],
+["B و V — صوت واحد","لا فرق بينهما، كلتاهما «ب» (وفي المنتصف تكون أخفّ وتقرب من «ڤ» خفيفة جداً).",["vaca|باكا","boca|بوكا","vino|بينو","bien|بيين"]],
+["D بين حرفي علة","في وسط الكلمة بين حرفي علة تلين وتقترب من «ذ» خفيفة. وفي أول الكلمة تُنطق «د» عادية.",["dedo|ديذو","nada|ناذا","lado|لاذو"]],
+["X — كس أو خاء","في الغالب تُنطق «كس»، وفي كلمات México و mexicano تُنطق «خ».",["taxi|تاكسي","examen|إكسامين","México|ميخيكو"]],
+["قاعدة النبر (الضغط)","إذا انتهت الكلمة بحرف علة أو n أو s يقع النبر على المقطع قبل الأخير (hablo, comen). وإن انتهت بغير ذلك يقع النبر على الأخير (hablar, ciudad). وإذا ظهرت علامة ´ فالنبر عليها دائماً.",["hablo|آبلو","hablar|آبلار","teléfono|تيليفونو","café|كافيه","ciudad|ثيودات"]],
+["حروف نادرة: K و W","تظهر فقط في الكلمات الأجنبية: kilo (كيلو)، whisky (ويسكي).",["kilo|كيلو","whisky|ويسكي","kiwi|كيوي"]]
+];
+var cur=0,slow=false,voices=[],box=document.getElementById("box"),nav=document.getElementById("nav"),warn=document.getElementById("warn");
+function lv(){try{voices=speechSynthesis.getVoices()}catch(e){}}
+if("speechSynthesis" in window){lv();speechSynthesis.onvoiceschanged=lv}else warn.style.display="block";
+function speak(t,el){
+ if(!("speechSynthesis" in window)){warn.style.display="block";return}
+ try{speechSynthesis.cancel();
+ var u=new SpeechSynthesisUtterance(t.replace(/\s*\/\s*/g,", "));
+ var v=voices.find(function(x){return x.lang.replace("_","-").toLowerCase()=="es-es"})||voices.find(function(x){return x.lang.toLowerCase().indexOf("es")==0});
+ if(v){u.voice=v;u.lang=v.lang}else{u.lang="es-ES";if(voices.length)warn.style.display="block"}
+ u.rate=slow?0.55:0.9;
+ if(el){el.classList.add("pl");u.onend=u.onerror=function(){el.classList.remove("pl")}}
+ speechSynthesis.speak(u)}catch(e){warn.style.display="block"}
+}
+function mk(tag,cls,txt){var e=document.createElement(tag);if(cls)e.className=cls;if(txt!=null)e.textContent=txt;return e}
+function show(i){
+ cur=i;box.innerHTML="";
+ [].forEach.call(nav.children,function(b,k){b.classList.toggle("on",k==i)});
+ if(i==D.length){
+  document.getElementById("cnt").textContent="ملاحظات على النطق";
+  box.appendChild(mk("div","card","")).innerHTML="";
+  var intro=box.lastChild;intro.appendChild(mk("h3",null,"كيف تقرأ الإسبانية؟"));
+  intro.appendChild(mk("p",null,"الإسبانية تُكتب كما تُنطق تقريباً، وهذا ما يجعلها سهلة. تعلّم الأصوات التالية ثم اضغط على الأمثلة لتسمعها."));
+  P.forEach(function(p){
+   var c=mk("div","card");c.appendChild(mk("h3",null,p[0]));c.appendChild(mk("p",null,p[1]));
+   var w=mk("div","chips");
+   p[2].forEach(function(x){var s=x.split("|");var b=mk("button","chip");var n=mk("b",null,s[0]);b.appendChild(n);b.appendChild(mk("small",null,s[1]));
+    b.onclick=function(){speak(s[0],b)};w.appendChild(b)});
+   c.appendChild(w);box.appendChild(c)});
+ }else{
+  var items=D[i][2].split("\n");
+  document.getElementById("cnt").textContent=items.length+" عبارة";
+  items.forEach(function(l){
+   var s=l.split("|");var r=mk("button","row");
+   r.appendChild(mk("span","sp","🔊"));
+   var t=mk("span","t");t.appendChild(mk("span","es",s[0]));t.appendChild(mk("span","ar",s[1]));
+   t.firstChild.style.display="block";t.lastChild.style.display="block";
+   r.appendChild(t);r.onclick=function(){speak(s[0],r)};box.appendChild(r)});
+ }
+ window.scrollTo(0,0);
+}
+D.concat([["🔤","النطق والحروف"]]).forEach(function(d,i){
+ var b=mk("button",null,d[0]+" "+d[1]);b.onclick=function(){show(i)};nav.appendChild(b)});
+document.getElementById("slow").onclick=function(){slow=!slow;this.classList.toggle("on",slow)};
+show(0);
+</script>
+</body>
+</html>
